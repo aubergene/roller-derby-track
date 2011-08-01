@@ -74,8 +74,11 @@ function reset() {
   bodies = [];
   elements = [];
 
+  createTrack()
+
   createTeam('#cc0000');
   createTeam('#0000cc');
+
 
 }
 
@@ -93,8 +96,6 @@ function createTeam(teamColor) {
   }
   options.role = 'jammer'
   createBall(200, Math.random() * stage[3], options);
-
-
 }
 
 
@@ -185,8 +186,52 @@ function createStar(ctx, size) {
 };
 
 
+function createTrack(ctx) {
+  var element = document.createElement("canvas");
+  element.width = stage[2];
+  element.height = stage[3];
+  element.style['position'] = 'absolute';
+  element.style['left'] = 0;
+  element.style['top'] = 0;
+
+  canvas.appendChild(element);
+
+  var ctx = element.getContext('2d');
+  // ctx.translate(element.width/2,element.height/2)
+  ctx.translate(stage[2]/2,stage[3]/2)
+
+
+  ctx.fillStyle = '#cccccc';
+  ctx.strokeStyle = '#000000';
+  ctx.lineWidth = 1;
+
+  var scale = stage[2] / 120
+
+  ctx.scale(scale,scale);
+
+  ctx.beginPath();
+
+  ctx.arc(-35/2, 0, 26.5, Math.PI * 1.5, Math.PI * .5, true);
+  ctx.lineTo(-35/2,26.5)
+  ctx.arc(35/2, 0, 26.5, Math.PI * .5, Math.PI * 1.5, true);
+
+  ctx.moveTo(-35/2,11.5)
+  ctx.arc(-35/2, -1, 12.5, Math.PI * .5, Math.PI * 1.5, false);
+  ctx.lineTo(35/2,-11.5)
+  ctx.arc(35/2, 1, 12.5, Math.PI * 1.5, Math.PI * .5, false);
+  ctx.lineTo(-35/2,11.5)
+
+  ctx.moveTo(-35/2,-26.5)
+  ctx.lineTo(35/2,-26.5)
+
+  ctx.closePath();
+
+  ctx.fill();
+  ctx.stroke();
+}
+
 function createBall( x, y, options ) {
-  var size = 100;
+  var size = 40;
 
   var element = document.createElement("canvas");
   element.width = size;
