@@ -86,16 +86,19 @@ function reset() {
 function createTeam(teamColor) {
   var x,y, options = {}
   options.teamColor = teamColor;
-  console.log(stage)
+  // console.log(stage)
 
   for( i = 0; i < 4; i++ ) {
-    x = 800 + Math.random() * 200;
-    y = Math.random() * stage[3];
-    if (i == 4) { options.role = 'pivot' }
+    // x = 800 + Math.random() * 200;
+    // y = Math.random() * stage[3];
+    x = stage[2]/2.5 + (stage[2] * 0.24 * Math.random());
+    y = stage[3] * .9 - (stage[3] * 0.15 * Math.random());
+
+    if (i == 1) { options.role = 'pivot' } else { options.role = undefined }
     createBall(x, y, options);
   }
   options.role = 'jammer'
-  createBall(200, Math.random() * stage[3], options);
+  createBall(stage[2]/2.6, stage[3] * .9 - (stage[3] * 0.2 * Math.random()) , options);
 }
 
 
@@ -169,7 +172,7 @@ function createStar(ctx, size) {
   scale = scale * 0.9;
   // offset = 200
 
-  console.log(scale)
+  // console.log(scale)
   ctx.save();
   ctx.scale(scale, scale * 0.95)
   ctx.translate(offset, offset)
@@ -182,6 +185,19 @@ function createStar(ctx, size) {
   ctx.lineTo(1000,1175);
   ctx.closePath();
   ctx.fill();
+  ctx.restore();
+};
+
+
+function createPivot(ctx, size) {
+  ctx.save();
+  ctx.strokeStyle = "#ffffff";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(0,size/2);
+  ctx.lineTo(size, size/2);
+  ctx.closePath();
+  ctx.stroke();
   ctx.restore();
 };
 
@@ -202,7 +218,7 @@ function createTrack(ctx) {
 
 
   ctx.fillStyle = '#cccccc';
-  ctx.strokeStyle = '#000000';
+  ctx.strokeStyle = '#333333';
   ctx.lineWidth = 1;
 
   var scale = stage[2] / 120
@@ -226,12 +242,20 @@ function createTrack(ctx) {
 
   ctx.closePath();
 
+  ctx.lineWidth = 0.5;
+
+  ctx.moveTo(35/2,13.5)
+  ctx.lineTo(35/2,26.5)
+  ctx.moveTo(-35/2+5,11.5)
+  ctx.lineTo(-35/2+5,26.5)
+
+
   ctx.fill();
   ctx.stroke();
 }
 
 function createBall( x, y, options ) {
-  var size = 40;
+  var size = stage[2]/50;
 
   var element = document.createElement("canvas");
   element.width = size;
@@ -244,7 +268,7 @@ function createBall( x, y, options ) {
 
   ctx.fillStyle = options.teamColor;
   ctx.strokeStyle = '#ffffff';
-  ctx.lineWidth = 3;
+  ctx.lineWidth = size/15;
   ctx.beginPath();
   ctx.arc(size * .5, size * .5, size * .45, 0, PI2, true);
   ctx.closePath();
@@ -253,6 +277,10 @@ function createBall( x, y, options ) {
 
   if (options.role == 'jammer') {
     createStar(ctx, size);
+  }
+
+  if (options.role == 'pivot') {
+    createPivot(ctx, size);
   }
 
   canvas.appendChild(element);
@@ -336,7 +364,7 @@ function mouseDrag() {
       md.body1 = world.m_groundBody;
       // md.body1 = body;
       md.body2 = body;
-      console.log(body)
+      // console.log(body)
       md.target.Set(mouseX, mouseY);
       md.maxForce = 30000 * body.m_mass;
       // md.dampingRatio = 2;
