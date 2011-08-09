@@ -1,0 +1,56 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="90" height="50" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="-20 -10 90 70"   preserveAspectRatio="xMinYMin meet"
+style="border:1px solid green; width:900; height:500">
+
+  <title>Example arcs01 - arc commands in path data</title>
+  <desc>Picture of a pie chart with two pie wedges and
+        a picture of a line with arc blips</desc>
+
+
+  <script type="text/ecmascript"> <![CDATA[
+    function circle_click(evt) {
+      console.log("woo")
+      var circle = evt.target;
+      var currentRadius = circle.getAttribute("r");
+      if (currentRadius == 100)
+        circle.setAttribute("r", currentRadius*2);
+      else
+        circle.setAttribute("r", currentRadius*0.5);
+    }
+  ]]> </script>
+
+  <g transform="translate(45,25) ">
+
+    <circle cx="17.5" cy="0" r="1"/>
+    <circle cx="-17.5" cy="0" r="1"/>
+
+
+
+    <path id="track" onmouseover="circle_click(evt)" fill="red" stroke="#ccc" stroke-width="1"
+      d="
+      M17.5,26.5
+      A26.5,26.5 0 0 0 17.5,-26.5
+      L-17.5,-26.5
+      A26.5,26.5 0 0 0 -17.5,26.5
+      L17.5,26.5
+
+      M-17.5,11.5
+      A1,1 0 0 1 -17.5,-13.5
+      L17.5,-11.5
+      A1,1 0 0 1 17.5,13.5
+      L-17.5,11.5
+
+      M17.5,13.5
+      L17.5,26.5
+
+      M-12.5,11.5
+      L-12.5,26.5
+
+
+          "  />
+
+  </g>
+
+</svg>
