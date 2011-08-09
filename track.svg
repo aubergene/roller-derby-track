@@ -2,7 +2,7 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
   "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="90" height="50" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="-20 -10 90 70"   preserveAspectRatio="xMinYMin meet"
-style="border:1px solid green; width:900; height:500">
+style="width:100%; height:100%">
 
   <title>Example arcs01 - arc commands in path data</title>
   <desc>Picture of a pie chart with two pie wedges and
@@ -21,14 +21,19 @@ style="border:1px solid green; width:900; height:500">
     }
   ]]> </script>
 
+  <style type="text/css">
+    .skater { r:1.5 }
+    .a { fill:#900 }
+    .b { fill:#009 }
+
+  </style>
+
   <g transform="translate(45,25) ">
 
-    <circle cx="17.5" cy="0" r="1"/>
-    <circle cx="-17.5" cy="0" r="1"/>
+    <circle cx="17.5" cy="0" r="0.5" />
+    <circle cx="-17.5" cy="0" r="0.5"/>
 
-
-
-    <path id="track" onmouseover="circle_click(evt)" fill="red" stroke="#ccc" stroke-width="1"
+    <path id="track" onmouseover="circle_click(evt)" fill="#ffc" stroke="#ccc" stroke-width="0.5"
       d="
       M17.5,26.5
       A26.5,26.5 0 0 0 17.5,-26.5
@@ -47,10 +52,15 @@ style="border:1px solid green; width:900; height:500">
 
       M-12.5,11.5
       L-12.5,26.5
+      z
+      "  />
 
+      <circle id="a-jammer" cx="-17.5" cy="16" r=".75" class="skater a" />
+      <circle id="b-jammer" cx="0" cy="" r=".75" class="b"/>
 
-          "  />
 
   </g>
+
+
 
 </svg>
