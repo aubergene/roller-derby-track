@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Roller Derby Track</title>
+  <style type="text/css" media="screen">
+  body {
+    background: #333;
+    color: #fff;
+    font-family: "Helvetica Neue", sans-serif;
+  }
+
+  .track {
+    border:16px dashed #ccc;
+    margin:16px;
+    float:left;
+  }
+  </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
+  <script src="js/raphael.js"></script>
+  <script>
+    $().ready(function() {
+      $('.track').each(function(i, trackEl) {
+        createTrack(trackEl.id);
+      })
+    });
+
+    function createTrack(id) {
+      var track = Raphael(id, 640, 480)
+      var skaterRadius = track.width/50;
+
+      function createSkater(x, y) {
+        var skater = track.circle(x, y, skaterRadius);
+        skater.attr("fill", "#f00");
+      }
+
+      function createJammer(x, y) {
+        createSkater(x,y);
+        var jammerStar = track.path('M 0 -1 L 0.588 0.809 -0.951 -0.309 0.951 -0.309 -0.588 0.809 Z"');
+
+        jammerStar.attr("fill", "#000");
+        jammerStar.scale(skaterRadius/1.1);
+        console.log(jammerStar)
+        jammerStar.translate(x,y-skaterRadius*.1);
+      }
+
+      function createBoundary() {
+        var boundary = track.path("M17.5,26.5\
+        A26.5,26.5 0 0 0 17.5,-26.5\
+        L-17.5,-26.5\
+        A26.5,26.5 0 0 0 -17.5,26.5\
+        L17.5,26.5\
+\
+        M-17.5,11.5\
+        A1,1 0 0 1 -17.5,-13.5\
+        L17.5,-11.5\
+        A1,1 0 0 1 17.5,13.5\
+        L-17.5,11.5\
+\
+        M17.5,13.5\
+        L17.5,26.5\
+\
+        M-12.5,11.5\
+        L-12.5,26.5\
+        z");
+        boundary.translate(track.width/2,track.height/2);
+        boundary.scale(1/(92/track.width))
+        boundary.attr("fill", "#ccc");
+      }
+
+      createBoundary();
+      createSkater(80,60);
+      createSkater(100,60);
+      createJammer(100,80);
+    }
+
+
+  </script>
+</head>
+<body>
+  <div id="track1" class="track"></div>
+  <div id="track2" class="track"></div>
+
+</body>
+</html>
