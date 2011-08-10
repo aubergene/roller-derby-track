@@ -1,7 +1,7 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
   "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="90" height="50" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="-20 -10 90 70"   preserveAspectRatio="xMinYMin meet"
+<svg width="160" height="80" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 160 80"   preserveAspectRatio="xMinYMin meet"
 style="width:100%; height:100%">
 
   <title>Example arcs01 - arc commands in path data</title>
@@ -28,7 +28,7 @@ style="width:100%; height:100%">
 
   </style>
 
-  <g transform="translate(45,25) ">
+  <g transform="translate(80,40) ">
 
     <circle cx="17.5" cy="0" r="0.5" />
     <circle cx="-17.5" cy="0" r="0.5"/>
@@ -55,8 +55,20 @@ style="width:100%; height:100%">
       z
       "  />
 
-      <circle id="a-jammer" cx="-17.5" cy="16" r=".75" class="skater a" />
-      <circle id="b-jammer" cx="0" cy="" r=".75" class="b"/>
+
+      <circle class="skater a" id="a-jammer"   cx="-14" cy="16" r=".75" />
+      <circle class="skater a" id="a-pivot"    cx="5" cy="16" r=".75" />
+      <circle class="skater a" id="a-blocker1" cx="5" cy="18" r=".75" />
+      <circle class="skater a" id="a-blocker2" cx="5" cy="20" r=".75" />
+      <circle class="skater a" id="a-blocker3" cx="5" cy="22" r=".75" />
+
+      <circle class="skater b" id="b-jammer"   cx="-14"   cy="20"   r=".75" />
+      <circle class="skater b" id="b-pivot"    cx="7" cy="16" r=".75" />
+      <circle class="skater b" id="b-blocker1" cx="7" cy="18" r=".75" />
+      <circle class="skater b" id="b-blocker2" cx="7" cy="20" r=".75" />
+      <circle class="skater b" id="b-blocker3" cx="7" cy="22" r=".75" />
+
+
 
 
   </g>
