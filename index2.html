@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Box2DJS - Physics Engine for JavaScript</title>
+  <script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js" ></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.15/jquery-ui.min.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    jQuery.noConflict();
+    Object.extend = jQuery.extend;
+  </script>
+  <script src="lib/jquery.svg.min.js"></script>
+  <script src='lib/box2d.js'></script>
+  <style type="text/css" media="screen">
+    body { margin:0; }
+  </style>
+</head>
+<body>
+
+  <svg id="ddd" width="640px" height="480px" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 80" style="border:15px dashed #ccc">
+
+    <style type="text/css">
+      .a { fill:#c00 }
+      .b { fill:#00c }
+    </style>
+
+    <g transform="translate(80,40) ">
+
+      <circle cx="17.5" cy="0" r="0.5" />
+      <circle cx="-17.5" cy="0" r="0.5"/>
+
+      <path id="track" fill="#ffc" stroke="#ccc" stroke-width="0.5"
+      d="
+      M17.5,26.5
+      A26.5,26.5 0 0 0 17.5,-26.5
+      L-17.5,-26.5
+      A26.5,26.5 0 0 0 -17.5,26.5
+      L17.5,26.5
+
+      M-17.5,11.5
+      A1,1 0 0 1 -17.5,-13.5
+      L17.5,-11.5
+      A1,1 0 0 1 17.5,13.5
+      L-17.5,11.5
+
+      M17.5,13.5
+      L17.5,26.5
+
+      M-12.5,11.5
+      L-12.5,26.5
+      z
+      "  />
+    </g>
+
+      <circle class="skater a" id="a-jammer"   cx="14" cy="16" r="1.75" />
+      <circle class="skater a" id="a-pivot"    cx="5" cy="16" r=".75" />
+      <circle class="skater a" id="a-blocker1" cx="5" cy="18" r=".75" />
+      <circle class="skater a" id="a-blocker2" cx="5" cy="20" r=".75" />
+      <circle class="skater a" id="a-blocker3" cx="5" cy="22" r=".75" />
+
+      <circle class="skater b" id="b-jammer"   cx="14"   cy="20" r="1.75" />
+      <circle class="skater b" id="b-pivot"    cx="7" cy="16" r=".75" />
+      <circle class="skater b" id="b-blocker1" cx="7" cy="18" r=".75" />
+      <circle class="skater b" id="b-blocker2" cx="7" cy="20" r=".75" />
+      <circle class="skater b" id="b-blocker3" cx="7" cy="22" r=".75" />
+
+  </svg>
+
+</body>
+
+<script type="text/javascript" charset="utf-8">
+
+var derbyTrack = (function($) {
+  var world, wallsSetted=false, skaters=[], balls=[], walls=[];
+
+  function createWorld() {
+    console.log("createWorld()")
+    var worldAABB = new b2AABB();
+    worldAABB.minVertex.Set( -200, -200 );
+    worldAABB.maxVertex.Set( screen.width + 200, screen.height + 200 );
+    var gravity = new b2Vec2(0, 0);
+    var doSleep = true;
+    world = new b2World(worldAABB, gravity, doSleep);
+  }
+
+  function createSkater(skaterId) {
+    console.log("createSkater('" + skaterId + "')");
+
+    var skater,cx,cy,radius
+    skater = document.getElementById(skaterId);
+    skaters.push(skater);
+
+    cx = parseFloat(skater.getAttribute('cx'))
+    cy = parseFloat(skater.getAttribute('cy'))
+    radius = parseFloat(skater.getAttribute('r'))
+    // console.log(radius)
+
+    var ballSd = new b2CircleDef();
+    ballSd.density = 1.0;
+    ballSd.radius = radius //* 1.8;
+    ballSd.restitution = 4.5;
+    ballSd.friction = 10;
+    var ballBd = new b2BodyDef();
+    ballBd.AddShape(ballSd);
+    ballBd.position.Set(cx,cy);
+    // ballBd.linearDamping = 0.1;
+    var ball = world.CreateBody(ballBd);
+    balls.push(ball)
+
+    // $(skater).bind('mousedown', function() {
+    //   console.log(this)
+    //   skater.moving = true;
+    // });
+    //
+    // $(skater).bind('mousemove', function() {
+    //   console.log(event.clientX)
+    //   ball.m_position.x = event.clientX;
+    //   ball.m_position.y = event.clientX;
+    // });
+
+    $(skater)
+      .draggable()
+      .bind('mousedown', function(event, ui){
+        // bring target to front
+        // console.log("woo");
+        $(event.target.parentElement).append( event.target );
+      })
+      .bind('drag', function(event, ui){
+        // console.log("yay");
+        // update coordinates manually, since top/left style props don't work on SVG
+        // event.target.setAttribute('cx', ui.position.left);
+        // event.target.setAttribute('cy', ui.position.top);
+          // console.log("clientX="+event.clientX)
+          console.log("left="+ui.position.left * (160/640))
+          console.log("top="+ui.position.top * (80/480))
+          // ball.m_position.x = event.clientX;
+          // ball.m_position.y = event.clientY;
+          ball.m_position.x = ui.position.left;
+          ball.m_position.y = ui.position.top;
+      });
+  }
+
+
+  function createBox(x, y, width, height, fixed) {
+    if (typeof(fixed) == 'undefined') {
+      fixed = true;
+    }
+
+    var boxSd = new b2BoxDef();
+
+    if (!fixed) {
+      boxSd.density = 1.0;
+    }
+
+    boxSd.extents.Set(width, height);
+
+    var boxBd = new b2BodyDef();
+    boxBd.AddShape(boxSd);
+    boxBd.position.Set(x,y);
+
+    world.CreateBody(boxBd);
+  }
+
+  function setWalls() {
+    var wallThickness=10,wWidth=160,wHeight=80;
+
+    if (wallsSetted) {
+      world.DestroyBody(walls[0]);
+      world.DestroyBody(walls[1]);
+      world.DestroyBody(walls[2]);
+      world.DestroyBody(walls[3]);
+
+      walls[0] = null;
+      walls[1] = null;
+      walls[2] = null;
+      walls[3] = null;
+    }
+
+    walls[0] = createBox(-(wWidth/2)-wallThickness+1, 0, wallThickness, wHeight/2 + wallThickness);
+    walls[1] = createBox(60, 0, 10, 40);
+
+    // walls[0] = createBox(wWidth / 2 - wallThickness, -wallThickness, wallThickness, wWidth);
+    // walls[1] = createBox(wWidth / 2 - wallThickness, -(wHeight / 2 + wallThickness), wallThickness, wHeight);
+
+    // walls[1] = createBox(0, 0, 20, 480);
+    // walls[2] = createBox(0, 280, 640, 20);
+    // walls[3] = createBox(0, 640, 20, 480);
+
+    wallsSetted = true;
+  }
+
+
+
+  function step() {
+    world.Step(1/60, 1);
+
+    console.log(skaters)
+
+    $.each(skaters, function(i, skater) {
+      skaters[i].setAttribute('cx', balls[i].m_position.x);
+      skaters[i].setAttribute('cy', balls[i].m_position.y);
+    });
+
+    // balls[0].m_position.x += 0.2
+    // balls[0].m_position.y += 0.08
+    //
+    // balls[5].m_position.x += 0.2
+    // balls[5].m_position.y -= 0.08
+    // console.log(balls[0].m_position.x)
+  }
+
+  function loop() {
+    setInterval(step, 1000/30);
+  }
+
+  createWorld();
+  setWalls();
+  // walls[0] = createBox(240, 640, 640, 20);
+
+  $('.skater').each(function(i, skater) {
+    createSkater(skater.id);
+  })
+  loop();
+
+})(jQuery);
+
+//
+//
+// jQuery().ready(load);
+//
+//
+// var world;
+// var ball;
+// var c;
+//
+//
+//
+// function load() {
+//   world = createWorld();
+//
+//   c = document.getElementById('a-jammer');
+//
+//   var cx, cy;
+//
+//   cx = parseInt(c.getAttribute('cx'))
+//   cy = parseInt(c.getAttribute('cy'))
+//
+//   // console.log(jQuery(c).attr('cx'))
+//   console.log(cx)
+//   console.log(cy)
+//
+//   ball = createBall(world, cx, cy);
+//   // ball = createBall(world, 50, 5);
+//   // ball = createBall(world, -14, 16);
+//
+//   setInterval('startTime();',1000/30);
+// }
+//
+// function restart() {
+//   // c.setAttribute('cx', 100);
+//   // c.setAttribute('cy', 50);
+//   ball.m_position.x = 100;
+//   ball.m_position.y = 50;
+// }
+//
+// function startTime(){
+//   world.Step(1/60, 1);
+//   // drawWorld(world, c)
+//
+//   c.setAttribute('cx', ball.m_position.x);
+//   c.setAttribute('cy', ball.m_position.y);
+// }
+//
+// function createWorld() {
+//   var worldAABB = new b2AABB();
+//   worldAABB.minVertex.Set(-1000, -1000);
+//   worldAABB.maxVertex.Set(1000, 1000);
+//   var gravity = new b2Vec2(0, 0);
+//   var doSleep = true;
+//   var world = new b2World(worldAABB, gravity, doSleep);
+//   // createGround(world);
+//   createBox(world, 0, 125, 10, 250);
+//   createBox(world, 500, 125, 10, 250);
+//   return world;
+// }
+//
+// // function createGround(world) {
+// //   var groundSd = new b2BoxDef();
+// //   groundSd.extents.Set(1000, 50);
+// //   groundSd.restitution = 0.2;
+// //   var groundBd = new b2BodyDef();
+// //   groundBd.AddShape(groundSd);
+// //   groundBd.position.Set(-500, 340);
+// //   return world.CreateBody(groundBd)
+// // }
+//
+// function createBall(world, x, y, r) {
+//   console.log("createBall(" + x + "," + y+ ")")
+//   var ballSd = new b2CircleDef();
+//   ballSd.density = 1.0;
+//   ballSd.radius = 10;
+//   ballSd.restitution = 0.5;
+//   ballSd.friction = 0;
+//   var ballBd = new b2BodyDef();
+//   ballBd.AddShape(ballSd);
+//   ballBd.position.Set(x,y);
+//   // ballBd.linearDamping = 1000;
+//   return world.CreateBody(ballBd);
+//   // return ballBd;
+// }
+//
+// function createBox(world, x, y, width, height, fixed) {
+//   if (typeof(fixed) == 'undefined') fixed = true;
+//   var boxSd = new b2BoxDef();
+//   if (!fixed) boxSd.density = 1.0;
+//   boxSd.extents.Set(width, height);
+//   var boxBd = new b2BodyDef();
+//   boxBd.AddShape(boxSd);
+//   boxBd.position.Set(x,y);
+//   return world.CreateBody(boxBd)
+// }
+</script>
+
+
+</html>
