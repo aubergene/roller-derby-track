@@ -19,35 +19,116 @@
       .b { fill:#00c }
     </style>
 
-    <circle class="skater a" id="a-jammer"   cx="155" cy="155" r="20" />
+    <g transform="translate(320,240) scale(6) ">
 
-    <circle class="skater b" id="b-jammer"   cx="175"   cy="155" r="20" />
+      <circle cx="17.5" cy="0" r="0.5" />
+      <circle cx="-17.5" cy="0" r="0.5"/>
+
+      <path id="track" fill="#ffc" stroke="#ccc" stroke-width="0.5"
+      d="
+      M17.5,26.5
+      A26.5,26.5 0 0 0 17.5,-26.5
+      L-17.5,-26.5
+      A26.5,26.5 0 0 0 -17.5,26.5
+      L17.5,26.5
+
+      M-17.5,11.5
+      A1,1 0 0 1 -17.5,-13.5
+      L17.5,-11.5
+      A1,1 0 0 1 17.5,13.5
+      L-17.5,11.5
+
+      M17.5,13.5
+      L17.5,26.5
+
+      M-12.5,11.5
+      L-12.5,26.5
+      z
+      "  />
+    </g>
+
+    <g transform="translate(50,50)" class="skater a" id="a-jammer">
+      <circle cx="0" cy="0"  r="8" />
+      <path transform="translate(-8,-8) scale(0.013)" fill="#fff" d="M0,449h1235l-999,726 382-1175 382,1175z"/>
+    </g>
+    <g transform="translate(25,50)" class="skater a" id="a-pivot">
+      <circle cx="0" cy="0"  r="8" />
+      <rect x="-8" y="-1" width="16" height="2" fill="#fff" />
+    </g>
+    <circle class="skater a" id="a-blocker1" transform="translate(25,80)"  r="8" />
+    <circle class="skater a" id="a-blocker2" transform="translate(25,110)" r="8" />
+    <circle class="skater a" id="a-blocker3" transform="translate(25,140)" r="8" />
+
+    <g transform="translate(150,50)" class="skater b" id="b-jammer">
+      <circle cx="0" cy="0"  r="8" />
+      <path transform="translate(-8,-8) scale(0.013)" fill="#fff" d="M0,449h1235l-999,726 382-1175 382,1175z"/>
+    </g>
+    <g transform="translate(175,50)" class="skater b" id="b-pivot">
+      <circle cx="0" cy="0"  r="8" />
+      <rect x="-8" y="-1" width="16" height="2" fill="#fff" />
+    </g>
+    <circle class="skater b" id="b-blocker1" transform="translate(37,80)"  r="8" />
+    <circle class="skater b" id="b-blocker2" transform="translate(37,110)" r="8" />
+    <circle class="skater b" id="b-blocker3" transform="translate(37,140)" r="8" />
 
   </svg>
 
 </body>
 
 <script type="text/javascript" charset="utf-8">
-$('#ddd').svg({onLoad: drawIntro});
 
-function drawIntro() {
-  // var svg = $("#ddd").svg('get');
-  // svg.add($('#ddd'));
+var teamsize = 10;
 
-  $('circle')
-    .draggable({cursorAt: { top:20, left:20 }})
+var skaters;
+$('#ddd').svg({onLoad: init});
+
+
+function init () {
+  skaters = $('.skater');
+  setPositions();
+  makeDraggable();
+}
+
+function setPositions() {
+  var coord, positions
+  positions = window.location.hash.substring(1).split(',')
+  if (positions.length != 10) {
+    positions = ["234:371","415:373","372:337","398:379","404:354","234:333","414:336","395:331","372:383","390:349"]
+  }
+
+  $.each(positions, function(i, position) {
+    coord = position.split(':');
+    // console.log(coord)
+    skaters[i].setAttribute('transform','translate(' + coord[0] + ',' + coord[1] + ')');
+  });
+}
+
+function makeDraggable() {
+  $('.skater')
+    .draggable()
     .bind('mousedown', function(event, ui){
       // bring target to front
-      $(event.target.parentElement).append( event.target );
+      // $(event.target.parentElement).append( event.target );
     })
     .bind('drag', function(event, ui){
       // update coordinates manually, since top/left style props don't work on SVG
-      event.target.setAttribute('cx', ui.position.left);
-      event.target.setAttribute('cy', ui.position.top);
+      // event.target.setAttribute('cx', ui.position.left);
+      // event.target.setAttribute('cy', ui.position.top);
+      event.target.setAttribute('transform', "translate(" + ui.position.left + "," + ui.position.top + ")");
       // console.log("left=" + ui.position.left + ", top=" + ui.position.top);
+      updateFragment();
     });
-
 };
+
+function updateFragment() {
+  var positions = [], transform;
+  $.each(skaters, function(i, skater) {
+    transform = skater.getAttribute('transform').replace('translate(','').replace(',',':').replace(')','');
+    positions.push(transform);
+  });
+  window.location.hash = positions.join(',');
+}
+
 
 </script>
 
