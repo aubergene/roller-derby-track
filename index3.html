@@ -2,29 +2,39 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <title>Box2DJS - Physics Engine for JavaScript</title>
-  <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.2.min.js" ></script>
-  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.15/jquery-ui.min.js" type="text/javascript"></script>
+  <title>Roller Derby Track</title>
+  <script type="text/javascript" src="js/jquery-1.6.2.min.js" ></script>
+  <script src="js/jquery-ui.min.js" type="text/javascript"></script>
   <script src="lib/jquery.svg.min.js"></script>
   <style type="text/css" media="screen">
-    body { margin:0; }
+    body { margin:0; background:#fc0;}
+    #track1 {
+      background:#fff;
+      position:absolute;
+      top:100px; left:100px;
+      width:600px; height:400px;
+    }
   </style>
+
 </head>
 <body>
 
-  <svg id="ddd" width="640px" height="480px" version="1.1" xmlns="http://www.w3.org/2000/svg" style="border:15px dashed #ccc">
+  <svg id="track1" viewBox="0 0 90 56" preserveAspectRatio="xMidYMid meet" version="1.1" xmlns="http://www.w3.org/2000/svg">
 
     <style type="text/css">
-      .a { fill:#c00 }
-      .b { fill:#00c }
+      .skater  { stroke-width:0.1px; stroke:#fff; }
+      .a-team  { fill:#c00 }
+      .b-team  { fill:#00c }
+      .track, .jammer-line, .pivot-line { fill:#ccc; stroke:#666; stroke-width:0.5px; }
+      text     { font-family:sans-serif; font-size:1px; fill:#999 }
+      .reset   { font-size:3px; }
+      a        { fill:#77c; }
+      a:hover  { fill:#009; }
     </style>
 
-    <g transform="translate(320,240) scale(6) ">
+    <g transform="translate(45,28)">
 
-      <circle cx="17.5" cy="0" r="0.5" />
-      <circle cx="-17.5" cy="0" r="0.5"/>
-
-      <path id="track" fill="#ffc" stroke="#ccc" stroke-width="0.5"
+      <path class="track"
       d="
       M17.5,26.5
       A26.5,26.5 0 0 0 17.5,-26.5
@@ -33,43 +43,80 @@
       L17.5,26.5
 
       M-17.5,11.5
-      A1,1 0 0 1 -17.5,-13.5
+      A1,1 0 0 1 -17.5,-12.5
       L17.5,-11.5
-      A1,1 0 0 1 17.5,13.5
+      A1,1 0 0 1 17.5,12.5
       L-17.5,11.5
-
-      M17.5,13.5
-      L17.5,26.5
-
-      M-12.5,11.5
-      L-12.5,26.5
       z
       "  />
+
+      <!-- Center points for outer boundary -->
+      <!--
+      <circle cx="17.5" cy="0" r="0.5" />
+      <circle cx="-17.5" cy="0" r="0.5"/>
+      -->
+
+      <!-- These start lines are perpendicular to the outside boundary, which isn't WFTDA standard -->
+      <!--
+      <line x1="17.5" y1="26.5" x2="17.5" y2="12.5" class="pivot-line" />
+      <line x1="-12.5" y1="26.5" x2="-12.5" y2="11.5" class="jammer-line" />
+      -->
+
+      <!-- Center points for inner boundary -->
+      <!--
+      <circle cx="17.5" cy="1" r="0.5" />
+      <circle cx="-17.5" cy="-1" r="0.5"/>
+      -->
+
+      <!-- Center line inner boundary -->
+      <!--
+      <line x1="17.5" y1="1" x2="-17.5" y2="-1" stroke="#ccc" stroke-width="1" />
+      -->
+
+      <!--
+      These lines are perpendicular to the inside boundary
+      -->
+      <g transform="rotate(3.27)">
+        <line x1="17.5" y1="25.5" x2="17.5" y2="11.5" class="pivot-line" />
+        <line x1="-12.5" y1="27.3" x2="-12.5" y2="12.5" class="jammer-line" />
+      </g>
+
+
     </g>
 
-    <g transform="translate(50,50)" class="skater a" id="a-jammer">
-      <circle cx="0" cy="0"  r="8" />
-      <path transform="translate(-8,-8) scale(0.013)" fill="#fff" d="M0,449h1235l-999,726 382-1175 382,1175z"/>
+    <g class="skater a-team jammer">
+      <circle cx="0" cy="0"  r="1.5" />
+      <path transform="translate(-1.5,-1.5) scale(0.0023)" fill="#fff" d="M0,449h1235l-999,726 382-1175 382,1175z"/>
     </g>
-    <g transform="translate(25,50)" class="skater a" id="a-pivot">
-      <circle cx="0" cy="0"  r="8" />
-      <rect x="-8" y="-1" width="16" height="2" fill="#fff" />
+    <g class="skater a-team pivot">
+      <circle cx="0" cy="0" r="1.5" />
+      <rect x="-1.5" y="-0.2" width="3" height="0.4" fill="#fff" />
     </g>
-    <circle class="skater a" id="a-blocker1" transform="translate(25,80)"  r="8" />
-    <circle class="skater a" id="a-blocker2" transform="translate(25,110)" r="8" />
-    <circle class="skater a" id="a-blocker3" transform="translate(25,140)" r="8" />
+    <g class="skater a-team blocker"><circle cx="0" cy="0" r="1.5" /></g>
+    <g class="skater a-team blocker"><circle cx="0" cy="0" r="1.5" /></g>
+    <g class="skater a-team blocker"><circle cx="0" cy="0" r="1.5" /></g>
 
-    <g transform="translate(150,50)" class="skater b" id="b-jammer">
-      <circle cx="0" cy="0"  r="8" />
-      <path transform="translate(-8,-8) scale(0.013)" fill="#fff" d="M0,449h1235l-999,726 382-1175 382,1175z"/>
+    <g class="skater b-team jammer">
+      <circle cx="0" cy="0"  r="1.5" />
+      <path transform="translate(-1.5,-1.5) scale(0.0023)" fill="#fff" d="M0,449h1235l-999,726 382-1175 382,1175z"/>
     </g>
-    <g transform="translate(175,50)" class="skater b" id="b-pivot">
-      <circle cx="0" cy="0"  r="8" />
-      <rect x="-8" y="-1" width="16" height="2" fill="#fff" />
+    <g class="skater b-team pivot">
+      <circle cx="0" cy="0" r="1.5" />
+      <rect x="-1.5" y="-0.2" width="3" height="0.4" fill="#fff" />
     </g>
-    <circle class="skater b" id="b-blocker1" transform="translate(37,80)"  r="8" />
-    <circle class="skater b" id="b-blocker2" transform="translate(37,110)" r="8" />
-    <circle class="skater b" id="b-blocker3" transform="translate(37,140)" r="8" />
+    <g class="skater b-team blocker"><circle cx="0" cy="0" r="1.5" /></g>
+    <g class="skater b-team blocker"><circle cx="0" cy="0" r="1.5" /></g>
+    <g class="skater b-team blocker"><circle cx="0" cy="0" r="1.5" /></g>
+
+    <text x="80" y="4" class="reset">
+      <a xlink:href="#">reset</a>
+    </text>
+
+
+    <text x="2" y="59" class="copyright">
+      <a xlink:href="http://github.com/aubergene/roller-derby-track">© 2011 Julian Burgess</a>.
+      Injustice Code at <a xlink:href="http://gothamgirlsrollerderby.com">Gotham Girls Roller Derby</a>
+    </text>
 
   </svg>
 
@@ -78,29 +125,46 @@
 <script type="text/javascript" charset="utf-8">
 
 var teamsize = 10;
+var defaultPositions = ["29.90:43.40","59.40:51.43","54.45:48.81","56.85:42.70","57.60:48.77","29.50:50.26","60.10:43.03","55.75:52.03","58.45:45.64","53.80:45.83"];
 
 var skaters;
-$('#ddd').svg({onLoad: init});
+var track1 = $('#track1').svg({onLoad: init}).get(0);
 
 
 function init () {
   skaters = $('.skater');
-  setPositions();
+  setPositionsFromHash();
   makeDraggable();
+
+  console.log(track1);
+
+  $('.reset').click(function(e) {
+    e.preventDefault();
+    resetPositions();
+  });
 }
 
-function setPositions() {
+function setPositionsFromHash() {
   var coord, positions
   positions = window.location.hash.substring(1).split(',')
   if (positions.length != 10) {
-    positions = ["234:371","415:373","372:337","398:379","404:354","234:333","414:336","395:331","372:383","390:349"]
+    resetPositions();
+  } else {
+    setPositions(positions);
   }
+}
 
+function resetPositions() {
+  setPositions(defaultPositions);
+}
+
+function setPositions(positions) {
   $.each(positions, function(i, position) {
     coord = position.split(':');
     // console.log(coord)
     skaters[i].setAttribute('transform','translate(' + coord[0] + ',' + coord[1] + ')');
   });
+  updateFragment();
 }
 
 function makeDraggable() {
@@ -109,22 +173,32 @@ function makeDraggable() {
     .bind('mousedown', function(event, ui){
       // bring target to front
       // $(event.target.parentElement).append( event.target );
+      $(event.target.parentElement.parentElement).append( event.target.parentElement );
     })
     .bind('drag', function(event, ui){
       // update coordinates manually, since top/left style props don't work on SVG
-      // event.target.setAttribute('cx', ui.position.left);
-      // event.target.setAttribute('cy', ui.position.top);
-      event.target.setAttribute('transform', "translate(" + ui.position.left + "," + ui.position.top + ")");
+      var left, top, x_scale, y_scale;
+      x_scale = track1.viewBox.baseVal.width / track1.width.baseVal.value ;
+      y_scale = track1.viewBox.baseVal.height / track1.height.baseVal.value;
+
+      left = ui.position.left * x_scale;
+      top  = ui.position.top * y_scale;
+      $('#positionLeft').text(left);
+      $('#positionTop').text(top);
+
+      event.target.setAttribute('transform', "translate(" + left + "," + top + ")");
       // console.log("left=" + ui.position.left + ", top=" + ui.position.top);
       updateFragment();
     });
 };
 
 function updateFragment() {
+  var decimal_places = 2;
   var positions = [], transform;
   $.each(skaters, function(i, skater) {
-    transform = skater.getAttribute('transform').replace('translate(','').replace(',',':').replace(')','');
-    positions.push(transform);
+    position = skater.getAttribute('transform').replace('translate(','').replace(')','').split(',');
+    position = $.map(position, function(val, i) { return parseFloat(val).toFixed(decimal_places) } ).join(':')
+    positions.push(position);
   });
   window.location.hash = positions.join(',');
 }
