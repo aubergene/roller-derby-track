@@ -10,10 +10,10 @@
     body { margin:0; background:#fc0;}
     #track1 {
       background:#fff;
-      position:absolute;
-      top:100px; left:100px;
-      width:600px; height:400px;
-    }
+      width:640px;
+      height:480px;
+      margin:0 auto;
+      }
   </style>
 
 </head>
@@ -125,7 +125,7 @@
 <script type="text/javascript" charset="utf-8">
 
 var teamsize = 10;
-var defaultPositions = ["29.90:43.40","59.40:51.43","54.45:48.81","56.85:42.70","57.60:48.77","29.50:50.26","60.10:43.03","55.75:52.03","58.45:45.64","53.80:45.83"];
+var defaultPositions = ["29.90:43.40", "59.40:51.43", "54.45:48.81", "56.85:42.70", "57.60:48.77", "29.50:50.26", "60.10:43.03", "55.75:52.03", "58.45:45.64", "53.80:45.83"];
 
 var skaters;
 var track1 = $('#track1').svg({onLoad: init}).get(0);
@@ -177,14 +177,26 @@ function makeDraggable() {
     })
     .bind('drag', function(event, ui){
       // update coordinates manually, since top/left style props don't work on SVG
-      var left, top, x_scale, y_scale;
-      x_scale = track1.viewBox.baseVal.width / track1.width.baseVal.value ;
-      y_scale = track1.viewBox.baseVal.height / track1.height.baseVal.value;
+      var left, top, x_scale, y_scale, viewBoxWidth, viewBoxHeight, svgWidth, svgHeight;
+
+      viewBoxWidth  = track1.viewBox.baseVal.width
+      viewBoxHeight = track1.viewBox.baseVal.height
+      svgWidth  = track1.width.baseVal.value;
+      svgHeight = track1.height.baseVal.value;
+
+      x_scale = viewBoxWidth / svgWidth;
+      y_scale = viewBoxHeight / svgHeight;
 
       left = ui.position.left * x_scale;
       top  = ui.position.top * y_scale;
       $('#positionLeft').text(left);
       $('#positionTop').text(top);
+
+      console.log("");
+      console.log([viewBoxWidth, viewBoxHeight]);
+      console.log([svgWidth, svgHeight]);
+      console.log([x_scale, y_scale]);
+      console.log([left, top]);
 
       event.target.setAttribute('transform', "translate(" + left + "," + top + ")");
       // console.log("left=" + ui.position.left + ", top=" + ui.position.top);
