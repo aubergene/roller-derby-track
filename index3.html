@@ -136,7 +136,7 @@ function init () {
   setPositionsFromHash();
   makeDraggable();
 
-  console.log(track1);
+  // console.log(track1);
 
   $('.reset').click(function(e) {
     e.preventDefault();
@@ -192,11 +192,11 @@ function makeDraggable() {
       $('#positionLeft').text(left);
       $('#positionTop').text(top);
 
-      console.log("");
-      console.log([viewBoxWidth, viewBoxHeight]);
-      console.log([svgWidth, svgHeight]);
-      console.log([x_scale, y_scale]);
-      console.log([left, top]);
+      // console.log("");
+      // console.log([viewBoxWidth, viewBoxHeight]);
+      // console.log([svgWidth, svgHeight]);
+      // console.log([x_scale, y_scale]);
+      // console.log([left, top]);
 
       event.target.setAttribute('transform', "translate(" + left + "," + top + ")");
       // console.log("left=" + ui.position.left + ", top=" + ui.position.top);
